@@ -1,0 +1,9 @@
+---
+# This playbook deploys the whole application stack in this site.
+
+- name: configure moviebox server
+  hosts: moviebox
+  remote_user: root
+
+  roles:
+    - samba

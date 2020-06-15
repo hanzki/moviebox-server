@@ -3,16 +3,12 @@ package search
 import "testing"
 
 func TestMovies(t *testing.T) {
-	cases := []struct {
-		in   string
-		want int
-	}{
-		{"", 0},
+	jc := &JackettClient{
+		"localhost",
+		"9117",
+		"gpowobdo7ztigmxjoeokamhjjh7bz8us",
+		map[string]*JackettCategory{"2000": {"2000", "Movies", nil}},
 	}
-	for _, c := range cases {
-		got := len(Movies(c.in))
-		if got != c.want {
-			t.Errorf("len(Movies(%q)) == %q, want %q", c.in, got, c.want)
-		}
-	}
+
+	jc.SearchMovies("big buck bunny")
 }

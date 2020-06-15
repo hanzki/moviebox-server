@@ -1,5 +1,10 @@
-module github.com/hanzki/hello
+module github.com/hanzki/moviebox-server
 
 go 1.14
 
-require github.com/google/go-cmp v0.4.1
+require (
+	github.com/beevik/guid v0.0.0-20170504223318-d0ea8faecee0
+	github.com/davecgh/go-spew v1.1.1
+	github.com/google/go-cmp v0.4.1
+	github.com/hekmon/transmissionrpc v1.1.0
+)
