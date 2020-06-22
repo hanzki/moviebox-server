@@ -3,7 +3,46 @@
 
 - name: configure moviebox server
   hosts: moviebox
-  remote_user: root
+  become: true
+
+  pre_tasks:
+    - name: 'Check mandatory variables are defined'
+      assert:
+        that:
+          - samba_user_password is defined
+    - name: Ensure package database is up-to-date
+      apt:
+        update-cache: true
+      failed_when: false
+      changed_when: false
+      when: ansible_os_family == 'Debian'
+    - name: Create users
+      user:
+        name: '{{ item }}'
+        groups: users
+        append: true
+      with_items:
+        - tv
+
+  vars:
+    samba_users:
+      - name: tv
+        password: '{{ samba_user_password }}'
+
+    samba_shares_root: /mnt/hdd1/shares
+    samba_shares:
+      - name: Movies
+        comment: 'Awesome Movies'
+        public: 'yes'
+        write_list: +users
+        group: users
+        browseable: 'yes'
+      - name: 'TV-Series'
+        comment: 'Awesome TV-Series'
+        public: 'yes'
+        write_list: +users
+        group: users
+        browseable: 'yes'
 
   roles:
-    - samba
+    - {role: bertvv.samba}
