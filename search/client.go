@@ -5,15 +5,17 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	urlUtils "net/url"
 	"strings"
 
 	"github.com/hanzki/moviebox-server/core"
 )
 
-// Movies queries the search service and returns slice of results
-func Movies(query string) []core.SearchResult {
-	return nil
+var (
+	Client HTTPClient
+)
+
+func init() {
+	Client = &http.Client{}
 }
 
 type JackettClient struct {
@@ -21,6 +23,10 @@ type JackettClient struct {
 	port       string
 	apikey     string
 	categories map[string]*JackettCategory
+}
+
+type HTTPClient interface {
+	Do(req *http.Request) (*http.Response, error)
 }
 
 func NewJackettClient(host, port, apikey string) (*JackettClient, error) {
@@ -31,13 +37,16 @@ func NewJackettClient(host, port, apikey string) (*JackettClient, error) {
 	return &JackettClient{host, port, apikey, categories}, nil
 }
 
-func getCategories(host, port, apikey string) (map[string]*JackettCategory, error) {
-	url := fmt.Sprintf("http://%s:%s/api/v2.0/indexers/all/results/torznab", host, port)
-	queryString := fmt.Sprintf("?apikey=%s&t=caps", apikey)
-	fullURI := url + queryString
+func torznabAPIurl(host, port string) string {
+	return fmt.Sprintf("http://%s:%s/api/v2.0/indexers/all/results/torznab", host, port)
+}
 
-	xml, err := getXML(fullURI)
-	_ = err //TODO: Check for errors
+func getCategories(host, port, apikey string) (map[string]*JackettCategory, error) {
+	req := buildRequest(torznabAPIurl(host, port), apikey, "caps", "", nil)
+	xml, err := getXML(req)
+	if err != nil {
+		panic(err)
+	}
 
 	jackettCategories := parseCaps(xml)
 
@@ -54,14 +63,11 @@ func getCategories(host, port, apikey string) (map[string]*JackettCategory, erro
 }
 
 func (jc *JackettClient) SearchMovies(query string) []*core.SearchResult {
-	url := fmt.Sprintf("http://%s:%s/api/v2.0/indexers/all/results/torznab", jc.host, jc.port)
-	queryString := fmt.Sprintf("?apikey=%s&t=search&q=%s&cat=%s", jc.apikey, urlUtils.QueryEscape(query), catString(jc.categories["2000"]))
-
-	fullURI := url + queryString
-	fmt.Println(fullURI)
-
-	xml, err := getXML(fullURI)
-	_ = err //TODO: Check for errors
+	req := buildRequest(torznabAPIurl(jc.host, jc.port), jc.apikey, "search", query, jc.categories["2000"])
+	xml, err := getXML(req)
+	if err != nil {
+		panic(err)
+	}
 
 	results := parseTorznab(xml, jc.categories)
 
@@ -69,18 +75,34 @@ func (jc *JackettClient) SearchMovies(query string) []*core.SearchResult {
 }
 
 func (jc *JackettClient) SearchTVSeries(query string) []*core.SearchResult {
-	url := fmt.Sprintf("http://%s:%s/api/v2.0/indexers/all/results/torznab", jc.host, jc.port)
-	queryString := fmt.Sprintf("?apikey=%s&t=search&q=%s&cat=%s", jc.apikey, urlUtils.QueryEscape(query), catString(jc.categories["5000"]))
-
-	fullURI := url + queryString
-	fmt.Println(fullURI)
-
-	xml, err := getXML(fullURI)
-	_ = err //TODO: Check for errors
+	req := buildRequest(torznabAPIurl(jc.host, jc.port), jc.apikey, "search", query, jc.categories["5000"])
+	xml, err := getXML(req)
+	if err != nil {
+		panic(err)
+	}
 
 	results := parseTorznab(xml, jc.categories)
 
 	return results
+}
+
+func buildRequest(url, apikey, queryType, query string, category *JackettCategory) *http.Request {
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	q := req.URL.Query()
+	q.Add("apikey", apikey)
+	q.Add("t", queryType)
+	if queryType == "search" {
+		q.Add("q", query)
+		if category != nil {
+			q.Add("cat", catString(category))
+		}
+	}
+	req.URL.RawQuery = q.Encode()
+	return req
 }
 
 func catString(cat *JackettCategory) string {
@@ -91,8 +113,8 @@ func catString(cat *JackettCategory) string {
 	return strings.Join(catIDs, ",")
 }
 
-func getXML(url string) ([]byte, error) {
-	resp, err := http.Get(url)
+func getXML(req *http.Request) ([]byte, error) {
+	resp, err := Client.Do(req)
 	if err != nil {
 		return []byte{}, fmt.Errorf("GET error: %v", err)
 	}

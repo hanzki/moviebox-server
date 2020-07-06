@@ -7,4 +7,5 @@ require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/google/go-cmp v0.4.1
 	github.com/hekmon/transmissionrpc v1.1.0
+	github.com/smartystreets/goconvey v1.6.4
 )

@@ -1,0 +1,37 @@
+<rss version="1.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:torznab="http://torznab.com/schemas/2015/feed">
+	<channel>
+		<atom:link href="http://localhost:9117/" rel="self" type="application/rss+xml" />
+		<title>AggregateSearch</title>
+		<description>This feed includes all configured trackers</description>
+		<link>http://127.0.0.1/</link>
+		<language>en-us</language>
+		<category>search</category>
+		<image>
+			<url>http://localhost:9117/logos/all.png</url>
+			<title>AggregateSearch</title>
+			<link>http://127.0.0.1/</link>
+			<description>AggregateSearch</description>
+		</image>
+        <item>
+            <title>Big Buck Bunny (1280x720 msmp4)</title>
+            <guid>http://www.legittorrents.info/index.php?page=torrent-details&amp;id=d42644b1a0eb635a4ffaf6ce17042d71428e6a8e</guid>
+            <jackettindexer id="legittorrents">Legit Torrents</jackettindexer>
+            <comments>http://www.legittorrents.info/index.php?page=torrent-details&amp;id=d42644b1a0eb635a4ffaf6ce17042d71428e6a8e</comments>
+            <pubDate>Sun, 01 Jun 2008 00:00:00 +0000</pubDate>
+            <grabs>7940</grabs>
+			<description />
+            <link>http://localhost:9117/dl/legittorrents/?jackett_apikey=gpowobdo7ztigmxjoeokamhjjh7bz8us&amp;path=Q2ZESjhPcWNEVnJwNmdWQmhqNDh0dGcxM2VtcXRJM0c3WGhuOUZCZ3lSeVRyWjkxWGhheThGd3VMWUc3RnM0d0xvWkhHMk5meDRRY3VCRk02TlExSjF5Tl81X0thTWY5ZzlWSE9xU1I5SlBIdjk2MEJIbXNHSElKdXJRMFdFVF81M1hETGNkaFM2MmFRaTU3aTczT0hsUm8zRE1zd2hRY1AtcHd5a1prSTNzdDhRcWp4bm5lTm1CVEREdEdSb0MyOEE0OEY1WnZZVTYwOW4zWWw4Zkh4QXpJa3BpbGtGT1VDa2FqcnNBWVlpRGY3N3IzLWdQQ1JKc0dkNld2TGlIbzNQLUZtcUdHcDYyRkdyVVNVZmplV1dWc3IyeDNhLXA1MjhVNXRmQXZZbk5OeERHdg&amp;file=Big+Buck+Bunny+(1280x720+msmp4)</link>
+            <category>2000</category>
+            <category>100001</category>
+            <enclosure url="http://localhost:9117/dl/legittorrents/?jackett_apikey=gpowobdo7ztigmxjoeokamhjjh7bz8us&amp;path=Q2ZESjhPcWNEVnJwNmdWQmhqNDh0dGcxM2VtcXRJM0c3WGhuOUZCZ3lSeVRyWjkxWGhheThGd3VMWUc3RnM0d0xvWkhHMk5meDRRY3VCRk02TlExSjF5Tl81X0thTWY5ZzlWSE9xU1I5SlBIdjk2MEJIbXNHSElKdXJRMFdFVF81M1hETGNkaFM2MmFRaTU3aTczT0hsUm8zRE1zd2hRY1AtcHd5a1prSTNzdDhRcWp4bm5lTm1CVEREdEdSb0MyOEE0OEY1WnZZVTYwOW4zWWw4Zkh4QXpJa3BpbGtGT1VDa2FqcnNBWVlpRGY3N3IzLWdQQ1JKc0dkNld2TGlIbzNQLUZtcUdHcDYyRkdyVVNVZmplV1dWc3IyeDNhLXA1MjhVNXRmQXZZbk5OeERHdg&amp;file=Big+Buck+Bunny+(1280x720+msmp4)" type="application/x-bittorrent" />
+            <torznab:attr name="category" value="2000" />
+            <torznab:attr name="category" value="100001" />
+            <torznab:attr name="seeders" value="59" />
+            <torznab:attr name="peers" value="59" />
+            <torznab:attr name="minimumratio" value="1" />
+            <torznab:attr name="minimumseedtime" value="172800" />
+            <torznab:attr name="downloadvolumefactor" value="0" />
+            <torznab:attr name="uploadvolumefactor" value="1" />
+        </item>
+	</channel>
+</rss>

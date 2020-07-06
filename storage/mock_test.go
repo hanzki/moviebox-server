@@ -4,56 +4,90 @@ import (
 	"testing"
 
 	"github.com/hanzki/moviebox-server/core"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestSave(t *testing.T) {
-	mockStorage := NewMock()
+	Convey("Given new storage mock", t, func() {
+		mockStorage := NewMock()
 
-	r := &core.SearchResult{
-		Title: "Testinator II",
-	}
+		Convey("Should update search result ID", func() {
+			r := &core.SearchResult{
+				Title: "Testinator II",
+			}
 
-	r, _ = mockStorage.Save(r)
+			r, err := mockStorage.Save(r)
+			check(err)
 
-	if r.ID == "" {
-		t.Errorf("Save didn't set new ID")
-	}
-	if r.CreatedAt.IsZero() {
-		t.Errorf("Save didn't set CreatedAt")
+			So(r.ID, ShouldNotEqual, "")
+		})
+
+		Convey("Should update CreatedAt", func() {
+			r := &core.SearchResult{
+				Title: "Testinator II",
+			}
+
+			r, err := mockStorage.Save(r)
+			check(err)
+
+			So(r.CreatedAt.IsZero(), ShouldBeFalse)
+		})
+	})
+
+}
+
+func check(e error) {
+	if e != nil {
+		panic(e)
 	}
 }
 
 func TestLoad(t *testing.T) {
-	mockStorage := NewMock()
 
-	r := &core.SearchResult{
-		Title: "Testinator II",
-	}
+	Convey("Given mock storage with existing results", t, func() {
+		mockStorage := NewMock()
+		r1 := &core.SearchResult{
+			Title: "Testinator II",
+		}
+		r1, err := mockStorage.Save(r1)
+		check(err)
 
-	r, _ = mockStorage.Save(r)
-	r2, _ := mockStorage.Load(r.ID)
+		Convey("Should load existing result", func() {
+			r, err := mockStorage.Load(r1.ID)
+			check(err)
 
-	if r2.Title != "Testinator II" {
-		t.Errorf("Load failed. Title = %s, expected = %s", r.Title, "Testinator II")
-	}
+			So(r.Title, ShouldEqual, r1.Title)
+		})
+
+		Convey("Should return error if matching result doesn't exist", func() {
+			_, err := mockStorage.Load("Not a real ID")
+			So(err, ShouldNotBeNil)
+		})
+	})
 }
 
 func TestUpdate(t *testing.T) {
-	mockStorage := NewMock()
+	Convey("Given mock storage with existing results", t, func() {
+		mockStorage := NewMock()
+		r1 := &core.SearchResult{
+			Title: "Testinator II",
+		}
+		r1, err := mockStorage.Save(r1)
+		check(err)
 
-	r := &core.SearchResult{
-		Title: "Testinator II",
-	}
+		Convey("Should allow updating existing result", func() {
+			r := &core.SearchResult{}
+			*r = *r1
+			r.Title = "Mocky V"
+			So(r.Title, ShouldNotEqual, r1.Title)
 
-	r, _ = mockStorage.Save(r)
+			err := mockStorage.Update(r)
+			check(err)
 
-	r.Title = "Mocky V"
+			r, err = mockStorage.Load(r.ID)
+			check(err)
 
-	_ = mockStorage.Update(r)
-
-	r, _ = mockStorage.Load(r.ID)
-
-	if r.Title != "Mocky V" {
-		t.Errorf("Update failed. Title = %s, expected = %s", r.Title, "Mocky V")
-	}
+			So(r.Title, ShouldEqual, "Mocky V")
+		})
+	})
 }

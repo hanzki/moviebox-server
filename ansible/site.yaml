@@ -25,6 +25,10 @@
         - tv
 
   vars:
+    samba_log: /var/log/samba.log
+    samba_log_size: 60000
+    samba_log_level: '3 passdb:5 auth:10 winbind:2 '
+
     samba_users:
       - name: tv
         password: '{{ samba_user_password }}'
