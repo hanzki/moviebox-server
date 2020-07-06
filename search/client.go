@@ -11,13 +11,20 @@ import (
 )
 
 var (
+	// Client is a HTTPClient used to connect to the Jackett service. Can be replaced with mock in tests.
 	Client HTTPClient
 )
+
+// HTTPClient provides decoupling from http.Client
+type HTTPClient interface {
+	Do(req *http.Request) (*http.Response, error)
+}
 
 func init() {
 	Client = &http.Client{}
 }
 
+// JackettClient provides API for searching movies and tv series from Jackett service
 type JackettClient struct {
 	host       string
 	port       string
@@ -25,10 +32,7 @@ type JackettClient struct {
 	categories map[string]*JackettCategory
 }
 
-type HTTPClient interface {
-	Do(req *http.Request) (*http.Response, error)
-}
-
+// NewJackettClient creates and initialises new JackettClient
 func NewJackettClient(host, port, apikey string) (*JackettClient, error) {
 	categories, err := getCategories(host, port, apikey)
 	if err != nil {
@@ -62,6 +66,7 @@ func getCategories(host, port, apikey string) (map[string]*JackettCategory, erro
 	return categories, nil
 }
 
+// SearchMovies queries Jackett service for movies with given query
 func (jc *JackettClient) SearchMovies(query string) []*core.SearchResult {
 	req := buildRequest(torznabAPIurl(jc.host, jc.port), jc.apikey, "search", query, jc.categories["2000"])
 	xml, err := getXML(req)
@@ -74,6 +79,7 @@ func (jc *JackettClient) SearchMovies(query string) []*core.SearchResult {
 	return results
 }
 
+// SearchTVSeries queries Jackett service for TV series with given query
 func (jc *JackettClient) SearchTVSeries(query string) []*core.SearchResult {
 	req := buildRequest(torznabAPIurl(jc.host, jc.port), jc.apikey, "search", query, jc.categories["5000"])
 	xml, err := getXML(req)

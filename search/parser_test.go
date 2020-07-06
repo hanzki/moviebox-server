@@ -22,7 +22,7 @@ func TestParseTorznab(t *testing.T) {
 			pubDate, err := time.Parse(time.RFC1123Z, "Sun, 01 Jun 2008 00:00:00 +0000")
 			check(err)
 			expected := []*core.SearchResult{
-				&core.SearchResult{
+				{
 					Title:       "Big Buck Bunny (1280x720 msmp4)",
 					IndexerGUID: "http://www.legittorrents.info/index.php?page=torrent-details&id=d42644b1a0eb635a4ffaf6ce17042d71428e6a8e",
 					Indexer:     "legittorrents",
@@ -68,15 +68,15 @@ func TestParseCaps(t *testing.T) {
 				ID:   "5000",
 				Name: "TV",
 				SubCategories: []*JackettCategory{
-					&JackettCategory{"5010", "TV/WEB-DL", nil},
-					&JackettCategory{"5020", "TV/FOREIGN", nil},
-					&JackettCategory{"5030", "TV/SD", nil},
-					&JackettCategory{"5040", "TV/HD", nil},
-					&JackettCategory{"5045", "TV/UHD", nil},
-					&JackettCategory{"5050", "TV/OTHER", nil},
-					&JackettCategory{"5060", "TV/Sport", nil},
-					&JackettCategory{"5070", "TV/Anime", nil},
-					&JackettCategory{"5080", "TV/Documentary", nil},
+					{"5010", "TV/WEB-DL", nil},
+					{"5020", "TV/FOREIGN", nil},
+					{"5030", "TV/SD", nil},
+					{"5040", "TV/HD", nil},
+					{"5045", "TV/UHD", nil},
+					{"5050", "TV/OTHER", nil},
+					{"5060", "TV/Sport", nil},
+					{"5070", "TV/Anime", nil},
+					{"5080", "TV/Documentary", nil},
 				},
 			}
 			results := parseCaps(capsResponse)

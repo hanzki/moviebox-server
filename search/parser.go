@@ -10,15 +10,18 @@ import (
 	"github.com/hanzki/moviebox-server/core"
 )
 
+// XMLJackettIndexer is used to un-marshall Jackett XML response
 type XMLJackettIndexer struct {
 	ID string `xml:"id,attr"`
 }
 
+// XMLTorznabAttr is used to un-marshall Jackett XML response
 type XMLTorznabAttr struct {
 	Key   string `xml:"name,attr"`
 	Value string `xml:"value,attr"`
 }
 
+// XMLItem is used to un-marshall Jackett XML response
 type XMLItem struct {
 	Title          string            `xml:"title"`
 	GUID           string            `xml:"guid"`
@@ -30,6 +33,7 @@ type XMLItem struct {
 	TorznabAttrs   []XMLTorznabAttr  `xml:"http://torznab.com/schemas/2015/feed attr"`
 }
 
+// XMLChannel is used to un-marshall Jackett XML response
 type XMLChannel struct {
 	Items []XMLItem `xml:"channel>item"`
 }
@@ -90,12 +94,14 @@ func findAttr(attrs []XMLTorznabAttr, name string) (string, bool) {
 	return "", false
 }
 
+// JackettCategory is a search result category supported by the Jackett service
 type JackettCategory struct {
 	ID            string             `xml:"id,attr"`
 	Name          string             `xml:"name,attr"`
 	SubCategories []*JackettCategory `xml:"subcat"`
 }
 
+// XMLCategories is used to un-marshall Jackett XML response
 type XMLCategories struct {
 	Categories []*JackettCategory `xml:"categories>category"`
 }
