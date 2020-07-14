@@ -50,3 +50,20 @@
 
   roles:
     - {role: bertvv.samba}
+
+- name: configure nordvpn
+  hosts: moviebox
+  become: true
+
+  pre_tasks:
+    - name: 'Check mandatory variables are defined'
+      assert:
+        that:
+          - nordvpn_user is defined
+          - nordvpn_pass is defined
+  vars:
+    nordvpn_lan_cidr: '192.168.1.0/24'
+    nordvpn_server: 'P2P'
+
+  roles:
+    - nordvpn
