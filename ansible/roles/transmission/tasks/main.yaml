@@ -1,0 +1,12 @@
+---
+# tasks file for transmission
+- name: Add transmission apt repository
+  apt_repository:
+    repo: ppa:transmissionbt/ppa
+- name: Install transmission
+  apt: 
+    update_cache: yes
+    pkg:
+      - transmission-cli
+      - transmission-common
+      - transmission-daemon 

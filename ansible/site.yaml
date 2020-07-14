@@ -67,3 +67,15 @@
 
   roles:
     - nordvpn
+
+- name: configure jackett
+  hosts: moviebox
+  become: true
+  roles:
+    - jackett
+
+- name: configure transmission
+  hosts: moviebox
+  become: true
+  roles:
+    - transmission
