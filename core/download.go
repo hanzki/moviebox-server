@@ -26,10 +26,10 @@ type Download struct {
 	CreatedAt time.Time
 	SearchID  SearchID
 	Status    DownloadStatus
-	link      string
-	progress  float64
-	location  string
-	hash      string
+	Link      string
+	Progress  float64
+	Location  string
+	Hash      string
 }
 
 // DownloadClient provides methods for downloading torrents and querying the download progress
