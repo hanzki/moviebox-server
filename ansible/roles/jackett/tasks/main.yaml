@@ -4,11 +4,15 @@
   group:
     name: jackett
     system: yes
+  tags:
+    - jackett
 - name: Add user for jackett
   user:
     name: jackett
     group: jackett
     system: yes
+  tags:
+    - jackett
 - name: Create a directory if it does not exist
   file:
     path: /opt/Jackett
@@ -16,6 +20,8 @@
     mode: '0755'
     owner: jackett
     group: jackett
+  tags:
+    - jackett
 - name: Download Jackett binaries
   unarchive:
     src: https://github.com/Jackett/Jackett/releases/download/v0.16.616/Jackett.Binaries.LinuxAMDx64.tar.gz
@@ -25,5 +31,9 @@
     group: jackett
     extra_opts:
       - '--strip-components=1'
+  tags:
+    - jackett  
 - name: Install jackett service
   command: /opt/Jackett/install_service_systemd.sh
+  tags:
+    - jackett

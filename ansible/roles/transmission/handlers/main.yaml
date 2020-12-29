@@ -1,0 +1,4 @@
+---
+- name: reload configuration
+  become: true
+  command: invoke-rc.d transmission-daemon reload

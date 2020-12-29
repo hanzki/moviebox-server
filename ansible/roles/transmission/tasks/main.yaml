@@ -3,6 +3,8 @@
 - name: Add transmission apt repository
   apt_repository:
     repo: ppa:transmissionbt/ppa
+  tags:
+    - transmission
 - name: Install transmission
   apt: 
     update_cache: yes
@@ -10,3 +12,24 @@
       - transmission-cli
       - transmission-common
       - transmission-daemon 
+  tags:
+    - transmission
+- name: Create downloads directory
+  file:
+    path: "{{transmission_download_folder}}"
+    state: directory
+    mode: '0755'
+    owner: debian-transmission
+    group: debian-transmission
+  tags:
+    - transmission
+- name: Ensure transmission uses the correct download directory
+  lineinfile:
+    dest: /etc/transmission-daemon/settings.json
+    regexp: '^(.*)download-dir'
+    line: '\1download-dir": "{{transmission_download_folder}}",' 
+    backrefs: yes
+  notify:
+    - reload configuration
+  tags:
+    - transmission

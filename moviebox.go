@@ -26,13 +26,15 @@ var (
 )
 
 func main() {
-	fmt.Println("Moviebox server v0.1.0")
+	fmt.Println("Moviebox server v0.2.0")
 	apikeyPtr = flag.String("apikey", "", "Jackett apikey")
 	queryPtr = flag.String("query", "", "Search query")
 	hostPtr = flag.String("host", "localhost", "Jackett host")
 	portPtr = flag.String("port", "9117", "Jackett port")
 	typePtr = flag.String("type", "movies", "Search type (movies/tv)")
 	flag.Parse()
+
+	fmt.Println(*apikeyPtr, *queryPtr, *hostPtr, *portPtr, *typePtr)
 
 	args := flag.Args()
 
@@ -49,6 +51,8 @@ func main() {
 		searchCmd()
 	case "download":
 		downloadCmd()
+	case "serve":
+		serveCmd()
 	default:
 		log.Fatalf("moviebox: Unknown command %s", command)
 	}
@@ -123,4 +127,43 @@ func downloadCmd() {
 	}
 
 	spew.Dump(download)
+}
+
+func serveCmd() {
+	if *apikeyPtr == "" {
+		fmt.Print("Missing required parameters.\n\n")
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	transmissionClient := download.NewTransmissionClient(&download.Config{
+		RPCHost:     "localhost",
+		RPCUser:     "transmission",
+		RPCPassword: "transmission",
+	})
+
+	downloadStorage := storage.NewDownloadStorageMock()
+
+	downloadController := &core.DownloadController{
+		Storage: downloadStorage,
+		Client:  transmissionClient,
+	}
+
+	jackettClient, err := search.NewJackettClient(
+		*hostPtr,
+		*portPtr,
+		*apikeyPtr,
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	searchStorage := storage.NewMock()
+
+	searchController := &core.SearchController{
+		Storage: searchStorage,
+		Client:  jackettClient,
+	}
+
+	startServer(searchController, downloadController)
 }

@@ -35,3 +35,13 @@
 18. Server receives another download status query from Chatbot
 19. Server fetches the download process information from Datastorage
 20. Server sends response to Chatbot telling the download is complete
+
+# Generic server maintenance notes
+
+## How to reboot the machine
+SSH into the box and run `sudo systemctl start reboot.target`
+
+## Interact with Transmission daemon
+* List torrents: `transmission-remote -n <use:pass> -l`
+* Add torrent: `transmission-remote -n <use:pass> -a <torrent_file_or_url>`
+* Torrent info: `transmission-remote -n <use:pass> -t <torrent_id> -i`

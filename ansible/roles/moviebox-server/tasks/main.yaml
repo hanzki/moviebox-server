@@ -1,0 +1,46 @@
+---
+# tasks file for moviebox API server
+- name: Build moviebox binary
+  become: false
+  local_action: 
+    module: command
+    chdir: ".."
+    cmd: ./build-release.sh
+  tags:
+    - moviebox-server
+
+- name: Install nginx
+  apt: 
+    update_cache: yes
+    pkg: nginx
+  tags:
+    - moviebox-server
+  
+- name: Copy moviebox binary to server
+  copy:
+    src: "{{ inventory_dir | dirname }}/moviebox-server"
+    dest: /var/www/moviebox-server
+    mode: 0755
+  notify:
+    - restart moviebox
+  tags:
+    - moviebox-server 
+
+- name: Copy moviebox service file
+  copy:
+    src: moviebox-server.service
+    dest: /etc/systemd/system/moviebox-server.service
+  notify:
+    - reload systemd
+    - restart moviebox
+  tags:
+    - moviebox-server
+
+- name: Copy nginx config
+  copy: 
+    src: moviebox.huhtanen.eu
+    dest: /etc/nginx/sites-enabled/moviebox.huhtanen.eu
+  notify:
+    - restart nginx
+  tags:
+    - moviebox-server

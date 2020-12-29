@@ -1,0 +1,14 @@
+---
+- name: reload systemd
+  become: true
+  command: systemctl daemon-reload
+- name: restart nginx
+  become: true
+  service:
+    name: nginx
+    state: restarted
+- name: restart moviebox
+  become: true
+  service:
+    name: moviebox-server
+    state: restarted

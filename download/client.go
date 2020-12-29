@@ -3,7 +3,9 @@ package download
 import (
 	"fmt"
 	"log"
+	"strconv"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/hanzki/moviebox-server/core"
 	"github.com/hekmon/transmissionrpc"
 )
@@ -16,6 +18,7 @@ type TransmissionClient struct {
 type Config struct {
 	//DownloadDir string
 	RPCHost     string
+	RPCPort     string
 	RPCUser     string
 	RPCPassword string
 }
@@ -26,7 +29,16 @@ func NewTransmissionClient(config *Config) *TransmissionClient {
 			config.DownloadDir = "/var/moviebox/downloads"
 		}
 	*/
-	transmissionbt, err := transmissionrpc.New(config.RPCHost, config.RPCUser, config.RPCPassword, nil)
+	var ac *transmissionrpc.AdvancedConfig
+	if config.RPCPort != "" {
+		port, err := strconv.Atoi(config.RPCPort)
+		if err != nil {
+			log.Fatalf("Failed to parse transmission port %s: %v", config.RPCPort, err)
+		}
+		ac = &transmissionrpc.AdvancedConfig{Port: uint16(port)}
+	}
+
+	transmissionbt, err := transmissionrpc.New(config.RPCHost, config.RPCUser, config.RPCPassword, ac)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -64,8 +76,13 @@ func (tc *TransmissionClient) Progress(download *core.Download) (*core.Download,
 		return nil, fmt.Errorf("TransmissionClient.Progress: Didn't find torrent for hash %s", download.Hash)
 	}
 	torrent := torrents[0]
+	if torrent.PercentDone == nil {
+		spew.Dump(torrent)
+		log.Fatalln("No PercentDone received!")
+	}
 	download.Progress = *torrent.PercentDone
-	if *torrent.IsFinished {
+
+	if *torrent.IsFinished || *torrent.PercentDone == 1 {
 		download.Status = core.Complete
 	}
 	return download, nil

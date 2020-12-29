@@ -65,3 +65,20 @@ func (dc *DownloadController) StartNewDownload(searchResult *SearchResult) (*Dow
 	}
 	return download, nil
 }
+
+// GetProgress returns up to date information on an ongoing download
+func (dc *DownloadController) GetProgress(id DownloadID) (*Download, error) {
+	download, err := dc.Storage.Load(id)
+	if err != nil {
+		return nil, fmt.Errorf("DownloadController.GetProgress didn't find download \"%s\", %v", id, err)
+	}
+	download, err = dc.Client.Progress(download)
+	if err != nil {
+		return nil, fmt.Errorf("DownloadController.GetProgress failed to query progress for download \"%s\", %v", id, err)
+	}
+	err = dc.Storage.Update(download)
+	if err != nil {
+		return nil, fmt.Errorf("DownloadController.GetProgress failed to update download to storage, %v", err)
+	}
+	return download, nil
+}

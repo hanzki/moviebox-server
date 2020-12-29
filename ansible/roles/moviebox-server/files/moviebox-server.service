@@ -1,0 +1,16 @@
+[Unit]
+Description= Moviebox API server
+Requires=jackett.service
+Requires=transmission-daemon.service
+After=network.target
+After=jackett.service
+After=transmission-daemon.service
+
+[Service]
+User=root
+Group=www-data
+Environment=GOPATH=/var/www/
+ExecStart=/var/www/moviebox-server -apikey=4f17uk5t1un5dlkqeb05d1chvmo2vrkd serve
+
+[Install]
+WantedBy=multi-user.target
